@@ -14,6 +14,13 @@
     .metric-label { color: #555; }
     .section-band { padding: 3rem 1.5rem; }
     .button.is-primary { background-color: #8b1e3f; }
+    .leaderboard-table { min-width: 640px; }
+    .leaderboard-table th, .leaderboard-table td { vertical-align: middle; }
+    .leaderboard-table th:nth-child(n+4), .leaderboard-table td:nth-child(n+4) { text-align: right; }
+    .leaderboard-table .rank { color: #666; font-variant-numeric: tabular-nums; }
+    .leaderboard-table .score { font-weight: 700; font-variant-numeric: tabular-nums; }
+    .leaderboard-table .top-model { background: #e9f3eb; }
+    .leaderboard-table .model-type { color: #606870; font-size: 0.875rem; }
   </style>
 </head>
 <body>
@@ -32,6 +39,32 @@
           <a class="button is-light" href="https://github.com/WenjieShu/SolveEdit">Code</a>
         </div>
       </div>
+    </div>
+  </section>
+
+  <section class="section section-band has-background-light" id="leaderboard">
+    <div class="container is-max-desktop">
+      <h2 class="title is-3">Leaderboard</h2>
+      <p class="mb-4">Direct model evaluation on all 2,728 SolveEdit cases. Video models are scored from their final frames.</p>
+      <div class="table-container">
+        <table class="table is-fullwidth is-striped leaderboard-table">
+          <thead><tr><th scope="col">Rank</th><th scope="col">Model</th><th scope="col">Type</th><th scope="col">Required <i>R</i> ↑</th><th scope="col">Damage <i>D</i> ↓</th><th scope="col">SolveScore ↑</th></tr></thead>
+          <tbody>
+            <tr class="top-model"><td class="rank">1</td><th scope="row">GPT-Image-2</th><td class="model-type">Commercial image</td><td>67.6</td><td>23.9</td><td class="score">57.0</td></tr>
+            <tr><td class="rank">2</td><th scope="row">Seedream 5.0 Pro</th><td class="model-type">Commercial image</td><td>64.3</td><td>17.6</td><td class="score">56.6</td></tr>
+            <tr><td class="rank">3</td><th scope="row">Gemini 3.1 Flash Image</th><td class="model-type">Commercial image</td><td>66.0</td><td>23.1</td><td class="score">55.5</td></tr>
+            <tr><td class="rank">4</td><th scope="row">Qwen Image 2.0 Pro</th><td class="model-type">Commercial image</td><td>50.7</td><td>28.8</td><td class="score">40.6</td></tr>
+            <tr><td class="rank">5</td><th scope="row">Kling V3</th><td class="model-type">Image to video</td><td>39.1</td><td>34.0</td><td class="score">27.5</td></tr>
+            <tr><td class="rank">6</td><th scope="row">FLUX.2 [dev]</th><td class="model-type">Open source image</td><td>31.7</td><td>32.3</td><td class="score">22.8</td></tr>
+            <tr><td class="rank">7</td><th scope="row">Qwen-Image-Edit-2509</th><td class="model-type">Open source image</td><td>32.7</td><td>47.5</td><td class="score">20.8</td></tr>
+            <tr><td class="rank">8</td><th scope="row">FLUX.1 Kontext [dev]</th><td class="model-type">Open source image</td><td>24.2</td><td>22.5</td><td class="score">18.7</td></tr>
+            <tr><td class="rank">9</td><th scope="row">BAGEL</th><td class="model-type">Open source image</td><td>22.4</td><td>45.5</td><td class="score">12.1</td></tr>
+            <tr><td class="rank">10</td><th scope="row">OmniGen2</th><td class="model-type">Open source image</td><td>18.1</td><td>45.9</td><td class="score">9.7</td></tr>
+            <tr><td class="rank">11</td><th scope="row">HunyuanVideo-1.5</th><td class="model-type">Image to video</td><td>17.3</td><td>55.5</td><td class="score">7.4</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="is-size-7">Scores are percentages. Higher is better for <i>R</i> and SolveScore; lower is better for <i>D</i>.</p>
     </div>
   </section>
 
@@ -77,25 +110,6 @@
         <div class="column"><div class="metric">57.0%</div><div class="metric-label">best direct SolveScore</div></div>
       </div>
       <p>Cases are organized by the information that fixes the transition: instruction-specified (IS), state-dependent (SD), and rule-dependent (RD). SolveScore reports required completion together with collateral changes to protected content. This separates a model choosing the wrong solution from a model rendering the right solution poorly.</p>
-    </div>
-  </section>
-
-  <section class="section section-band has-background-light">
-    <div class="container is-max-desktop">
-      <h2 class="title is-3">Model results</h2>
-      <div class="table-container">
-        <table class="table is-fullwidth is-striped is-hoverable">
-          <thead><tr><th>Model</th><th>Required <i>R</i></th><th>Protected <i>D</i></th><th>SolveScore</th></tr></thead>
-          <tbody>
-            <tr><td>GPT-Image-2</td><td>67.6</td><td>23.9</td><td><strong>57.0</strong></td></tr>
-            <tr><td>Seedream 5.0 Pro</td><td>64.3</td><td>17.6</td><td>56.6</td></tr>
-            <tr><td>Gemini 3.1 Flash Image</td><td>66.0</td><td>23.1</td><td>55.5</td></tr>
-            <tr><td>FLUX.2 [dev]</td><td>31.7</td><td>32.3</td><td>22.8</td></tr>
-            <tr><td>Kling V3</td><td>39.1</td><td>34.0</td><td>27.5</td></tr>
-          </tbody>
-        </table>
-      </div>
-      <p class="is-size-7">Scores are percentages; higher is better for <i>R</i> and SolveScore, while lower is better for <i>D</i>.</p>
     </div>
   </section>
 
