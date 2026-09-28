@@ -21,6 +21,10 @@
     .leaderboard-table .score { font-weight: 700; font-variant-numeric: tabular-nums; }
     .leaderboard-table .top-model { background: #e9f3eb; }
     .leaderboard-table .model-type { color: #606870; font-size: 0.875rem; }
+    .case-row { padding: 1.25rem 0; border-bottom: 1px solid #d9dcde; }
+    .case-row:last-child { border-bottom: 0; }
+    .case-row figure { margin: 0; min-width: 0; }
+    .case-row img { display: block; width: 100%; height: auto; }
   </style>
 </head>
 <body>
@@ -125,10 +129,17 @@
     <div class="container is-max-desktop">
       <h2 class="title is-3">Representative cases</h2>
       <p class="mb-5">The three examples below show how the information source changes across IS, SD, and RD cases. Each pair shows the input and a generated output.</p>
-      <div class="columns is-multiline">
-        <div class="column is-half"><h3 class="title is-5">IS: Selective cleanup</h3><div class="columns is-mobile"><div class="column"><img src="static/images/case1_input.jpg" alt="IS input"></div><div class="column"><img src="static/images/case1_output.jpg" alt="IS output"></div></div></div>
-        <div class="column is-half"><h3 class="title is-5">SD: Road bridge repair</h3><div class="columns is-mobile"><div class="column"><img src="static/images/case2_input.jpg" alt="SD input"></div><div class="column"><img src="static/images/case2_output.jpg" alt="SD output"></div></div></div>
-        <div class="column is-half"><h3 class="title is-5">RD: Storyboard connection repair</h3><div class="columns is-mobile"><div class="column"><img src="static/images/case3_input.jpg" alt="RD input"></div><div class="column"><img src="static/images/case3_output.jpg" alt="RD output"></div></div></div>
+      <div class="case-row">
+        <h3 class="title is-5">IS: Selective cleanup</h3>
+        <div class="columns is-mobile"><figure class="column"><img src="static/images/case1_input.jpg" alt="IS input"><figcaption class="is-size-7 mt-2">Input</figcaption></figure><figure class="column"><img src="static/images/case1_output.jpg" alt="IS output"><figcaption class="is-size-7 mt-2">Output</figcaption></figure></div>
+      </div>
+      <div class="case-row">
+        <h3 class="title is-5">SD: Road bridge repair</h3>
+        <div class="columns is-mobile"><figure class="column"><img src="static/images/case2_input.jpg" alt="SD input"><figcaption class="is-size-7 mt-2">Input</figcaption></figure><figure class="column"><img src="static/images/case2_output.jpg" alt="SD output"><figcaption class="is-size-7 mt-2">Output</figcaption></figure></div>
+      </div>
+      <div class="case-row">
+        <h3 class="title is-5">RD: Storyboard connection repair</h3>
+        <div class="columns is-mobile"><figure class="column"><img src="static/images/case3_input.jpg" alt="RD input"><figcaption class="is-size-7 mt-2">Input</figcaption></figure><figure class="column"><img src="static/images/case3_output.jpg" alt="RD output"><figcaption class="is-size-7 mt-2">Output</figcaption></figure></div>
       </div>
     </div>
   </section>
