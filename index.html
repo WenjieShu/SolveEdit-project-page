@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SolveEdit: Visual Problem Solving in Generative Models</title>
+  <link rel="stylesheet" href="static/css/bulma.min.css">
+  <link rel="stylesheet" href="static/css/index.css">
+  <style>
+    .publication-title { letter-spacing: 0; }
+    .project-figure { width: 100%; max-height: 30rem; object-fit: contain; }
+    .project-figure.tall { max-height: none; }
+    .metric { font-size: 2rem; font-weight: 700; color: #8b1e3f; }
+    .metric-label { color: #555; }
+    .section-band { padding: 3rem 1.5rem; }
+    .button.is-primary { background-color: #8b1e3f; }
+  </style>
+</head>
+<body>
+  <section class="hero">
+    <div class="hero-body">
+      <div class="container is-max-desktop has-text-centered">
+        <h1 class="title is-1 publication-title">SolveEdit</h1>
+        <p class="subtitle">Benchmarking Visual Problem Solving in Generative Models</p>
+        <p class="is-size-5">Wenjie Shu<sup>*</sup>, Yexin Liu<sup>*</sup>, Harold Haodong Chen, Xuerui Qiu, Zehan Wang,<br>
+          Yidi Zhang, Yizhan Chen, Zunwei Wang, Minghao Liu, Qi Chen<sup>†</sup>,<br>
+          Harry Yang, Xiaogang Xu<sup>†</sup></p>
+        <p class="is-size-6">ZODA · HKUST · UCAS · ZJU · UTokyo</p>
+        <p class="is-size-7"><sup>*</sup>Equal contribution. <sup>†</sup>Corresponding authors.</p>
+        <div class="buttons is-centered mt-5">
+          <a class="button is-primary" href="static/pdfs/solveedit.pdf">Paper PDF</a>
+          <a class="button is-light" href="https://github.com/WenjieShu/SolveEdit">Code</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section-band">
+    <div class="container is-max-desktop">
+      <figure class="image">
+        <img class="project-figure" src="static/images/solveedit-teaser.png" alt="SolveEdit benchmark overview">
+      </figure>
+      <h2 class="title is-3 mt-6">Abstract</h2>
+      <p>Generative visual systems are often asked to transform an existing scene while preserving what should remain. SolveEdit evaluates this ability as visual problem solving: given an image and a goal, a model must infer a valid transition from the request and visual evidence, execute it, and protect unrelated content. The benchmark contains 2,728 cases with atomic required and protected conditions, enabling reference-free completion and preservation scores.</p>
+    </div>
+  </section>
+
+  <section class="section section-band has-background-light">
+    <div class="container is-max-desktop">
+      <h2 class="title is-3">The problem: an edit is a transition</h2>
+      <p>Most image-editing evaluations state the desired transformation explicitly. Real visual tasks are less direct: the request may leave the target, destination, or final state to be inferred from the scene, or may refer to a rule shown in the image. A successful system therefore has to answer two linked questions: <em>what transition is valid?</em> and <em>can it render that transition without changing unrelated content?</em></p>
+      <div class="columns mt-5">
+        <div class="column"><strong>1. Determine</strong><br>Ground the request and recover the scene-dependent transition.</div>
+        <div class="column"><strong>2. Execute</strong><br>Ask an image or video generator to realize the transition.</div>
+        <div class="column"><strong>3. Preserve</strong><br>Check required completion and protected content separately.</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section-band">
+    <div class="container is-max-desktop">
+      <h2 class="title is-3">What the benchmark measures</h2>
+      <figure class="image mb-5"><img class="project-figure" src="static/images/figure2v3-web.png" alt="SolveEdit application breadth"></figure>
+      <p>SolveEdit spans ten application domains, from semantic grouping and numerical correction to route tracing, structural assembly, and constrained action.</p>
+      <figure class="image mb-5"><img class="project-figure" src="static/images/fig3-overview.png" alt="SolveEdit formulation and evaluation overview"></figure>
+      <p>SolveEdit separates transition determination from image rendering. Each case records required conditions for the intended change and protected conditions for content that should remain intact.</p>
+      <figure class="image mt-6"><img class="project-figure tall" src="static/images/figure4-statistics.png" alt="SolveEdit benchmark statistics"></figure>
+    </div>
+  </section>
+
+  <section class="section section-band has-background-light">
+    <div class="container is-max-desktop">
+      <h2 class="title is-3">Benchmark at a glance</h2>
+      <div class="columns has-text-centered">
+        <div class="column"><div class="metric">2,728</div><div class="metric-label">visual problem cases</div></div>
+        <div class="column"><div class="metric">29,460</div><div class="metric-label">atomic contract criteria</div></div>
+        <div class="column"><div class="metric">57.0%</div><div class="metric-label">best direct SolveScore</div></div>
+      </div>
+      <p>Cases are organized by the information that fixes the transition: instruction-specified (IS), state-dependent (SD), and rule-dependent (RD). SolveScore reports required completion together with collateral changes to protected content. This separates a model choosing the wrong solution from a model rendering the right solution poorly.</p>
+    </div>
+  </section>
+
+  <section class="section section-band has-background-light">
+    <div class="container is-max-desktop">
+      <h2 class="title is-3">Model results</h2>
+      <div class="table-container">
+        <table class="table is-fullwidth is-striped is-hoverable">
+          <thead><tr><th>Model</th><th>Required $R$</th><th>Protected $D$</th><th>SolveScore</th></tr></thead>
+          <tbody>
+            <tr><td>GPT-Image-2</td><td>67.6</td><td>23.9</td><td><strong>57.0</strong></td></tr>
+            <tr><td>Seedream 5.0 Pro</td><td>64.3</td><td>17.6</td><td>56.6</td></tr>
+            <tr><td>Gemini 3.1 Flash Image</td><td>66.0</td><td>23.1</td><td>55.5</td></tr>
+            <tr><td>FLUX.2 [dev]</td><td>31.7</td><td>32.3</td><td>22.8</td></tr>
+            <tr><td>Kling V3</td><td>39.1</td><td>34.0</td><td>27.5</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="is-size-7">Scores are percentages; higher is better for $R$ and SolveScore, while lower is better for $D$.</p>
+    </div>
+  </section>
+
+  <section class="section section-band">
+    <div class="container is-max-desktop">
+      <h2 class="title is-3">Planning before generation</h2>
+      <p class="mb-5">SolveEdit-Plan uses Inspect and Resolve to recover unresolved transition variables before the final editing call. It improves GPT-Image-2 from 57.0% to 71.6% under a matched one-generation budget and transfers to the tested open-source image and video generators.</p>
+      <figure class="image"><img class="project-figure" src="static/images/planning-results.png" alt="Planning results across controls and generators"></figure>
+    </div>
+  </section>
+
+  <section class="section section-band has-background-light">
+    <div class="container is-max-desktop">
+      <h2 class="title is-3">Representative cases</h2>
+      <p class="mb-5">The three examples below show how the information source changes across IS, SD, and RD cases. Each pair shows the input and a generated output.</p>
+      <div class="columns is-multiline">
+        <div class="column is-half"><h3 class="title is-5">IS: Selective cleanup</h3><div class="columns is-mobile"><div class="column"><img src="static/images/case1_input.jpg" alt="IS input"></div><div class="column"><img src="static/images/case1_output.jpg" alt="IS output"></div></div></div>
+        <div class="column is-half"><h3 class="title is-5">SD: Road bridge repair</h3><div class="columns is-mobile"><div class="column"><img src="static/images/case2_input.jpg" alt="SD input"></div><div class="column"><img src="static/images/case2_output.jpg" alt="SD output"></div></div></div>
+        <div class="column is-half"><h3 class="title is-5">RD: Storyboard connection repair</h3><div class="columns is-mobile"><div class="column"><img src="static/images/case3_input.jpg" alt="RD input"></div><div class="column"><img src="static/images/case3_output.jpg" alt="RD output"></div></div></div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="content has-text-centered"><p>SolveEdit · benchmark and planning materials</p></div>
+  </footer>
+</body>
+</html>

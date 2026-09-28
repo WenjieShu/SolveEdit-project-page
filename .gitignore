@@ -1,0 +1,10 @@
+static/videos/
+static/js/
+static/images/carousel*.jpg
+static/images/*.pdf
+static/images/figure2v3.png
+static/pdfs/sample.pdf
+static/css/bulma-slider*
+static/css/bulma-carousel*
+static/css/bulma.css.map.txt
+static/css/fontawesome.all.min.css
