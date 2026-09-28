@@ -3,6 +3,7 @@ static/js/
 static/images/carousel*.jpg
 static/images/*.pdf
 static/images/figure2v3.png
+static/images/favicon.ico
 static/pdfs/sample.pdf
 static/css/bulma-slider*
 static/css/bulma-carousel*
