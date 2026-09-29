@@ -46,6 +46,25 @@
     .score-fill { display: block; height: 100%; background: #8b1e3f; }
     .score-value { width: 2.8rem; }
     .leaderboard-note { color: #747b84; margin-top: 0.75rem; }
+    .leaderboard-chart { margin: 1.5rem 0 0; }
+    .chart-legend { display: flex; justify-content: flex-end; gap: 1.25rem; flex-wrap: wrap; font-size: 0.75rem; color: #606870; margin-bottom: 1.25rem; }
+    .chart-legend span { display: inline-flex; align-items: center; gap: 0.45rem; }
+    .chart-legend i { width: 10px; height: 10px; border-radius: 2px; }
+    .chart-scroll { overflow-x: auto; }
+    .chart-layout { display: grid; grid-template-columns: 3rem 1fr; min-width: 880px; padding-top: 1.25rem; }
+    .chart-yaxis { position: relative; height: 280px; color: #858b94; font-size: 0.75rem; font-variant-numeric: tabular-nums; }
+    .chart-yaxis span { position: absolute; right: 0.65rem; transform: translateY(50%); }
+    .chart-columns { display: grid; gap: 1rem; position: relative; isolation: isolate; }
+    .chart-grid { position: absolute; inset: 0 0 auto; height: 280px; z-index: -1; }
+    .chart-grid span { position: absolute; left: 0; right: 0; border-top: 1px solid #e8ebee; }
+    .chart-grid span:first-child { border-top-color: #bfc5cc; }
+    .chart-column { min-width: 0; text-align: center; }
+    .chart-bar-space { height: 280px; display: flex; align-items: flex-end; justify-content: center; }
+    .chart-bar { width: 100%; max-width: 54px; min-height: 1px; background: var(--bar-color); border-radius: 4px 4px 0 0; position: relative; }
+    .chart-bar-value { position: absolute; bottom: calc(100% + 7px); left: 50%; transform: translateX(-50%); font-size: 0.8125rem; font-weight: 600; color: #343a42; white-space: nowrap; font-variant-numeric: tabular-nums; }
+    .chart-model { padding-top: 0.8rem; font-size: 0.6875rem; line-height: 1.5; color: #616974; overflow-wrap: anywhere; }
+    .chart-column.best .chart-model, .chart-column.best .chart-bar-value { font-weight: 700; color: #8b1e3f; }
+    .chart-axis-title { text-align: center; margin: 1rem 0 1.5rem; font-size: 0.8125rem; color: #747b84; }
     @media (max-width: 600px) { .leaderboard-heading { display: block; } .leaderboard-filters button { padding: 0.6rem; } .leaderboard-toolbar { gap: 0.75rem; } }
     .case-row { padding: 1.25rem 0; border-bottom: 1px solid #d9dcde; }
     .case-row:last-child { border-bottom: 0; }
@@ -76,6 +95,16 @@
     <div class="container is-max-desktop">
       <div class="leaderboard-heading"><h2 class="title is-3">Leaderboard</h2><span class="leaderboard-count" id="leaderboard-count" aria-live="polite">11 models · 2,728 cases</span></div>
       <p class="mb-4">Direct model evaluation on all 2,728 SolveEdit cases. Video models are scored from their final frames.</p>
+      <figure class="leaderboard-chart" id="leaderboard-chart" hidden aria-label="SolveScore comparison of evaluated models">
+        <div class="chart-legend"><span><i style="background:#8b1e3f"></i>Commercial image</span><span><i style="background:#438b75"></i>Open source image</span><span><i style="background:#5e87b0"></i>Image to video</span></div>
+        <div class="chart-scroll">
+          <div class="chart-layout">
+            <div class="chart-yaxis" aria-hidden="true"><span style="bottom:0">0%</span><span style="bottom:16.6667%">10%</span><span style="bottom:33.3333%">20%</span><span style="bottom:50%">30%</span><span style="bottom:66.6667%">40%</span><span style="bottom:83.3333%">50%</span><span style="bottom:100%">60%</span></div>
+            <div class="chart-columns" id="chart-columns"></div>
+          </div>
+        </div>
+        <figcaption class="chart-axis-title">SolveScore (%) · Direct generation</figcaption>
+      </figure>
       <div class="leaderboard-toolbar" id="leaderboard-toolbar" hidden>
         <div class="leaderboard-filters" role="group" aria-label="Model type">
           <button type="button" data-filter="all" aria-pressed="true">All models</button>
@@ -188,6 +217,41 @@
     const leaderboardSort = document.getElementById('leaderboard-sort');
     const filterButtons = Array.from(document.querySelectorAll('[data-filter]'));
     let modelFilter = 'all';
+    function renderChart() {
+      const rows = leaderboardRows.filter(row => modelFilter === 'all' || row.dataset.type === modelFilter).sort((a, b) => Number(a.dataset.score) - Number(b.dataset.score));
+      const columns = document.getElementById('chart-columns');
+      columns.replaceChildren();
+      columns.style.gridTemplateColumns = `repeat(${rows.length}, minmax(0, 1fr))`;
+      const grid = document.createElement('div');
+      grid.className = 'chart-grid';
+      grid.setAttribute('aria-hidden', 'true');
+      for (let tick = 0; tick <= 6; tick++) {
+        const line = document.createElement('span');
+        line.style.bottom = `${tick / 6 * 100}%`;
+        grid.append(line);
+      }
+      columns.append(grid);
+      rows.forEach(row => {
+        const column = document.createElement('div');
+        column.className = 'chart-column' + (row.dataset.score === '57.0' ? ' best' : '');
+        column.style.setProperty('--bar-color', { commercial: '#8b1e3f', open: '#438b75', video: '#5e87b0' }[row.dataset.type]);
+        const space = document.createElement('div');
+        space.className = 'chart-bar-space';
+        const bar = document.createElement('div');
+        bar.className = 'chart-bar';
+        bar.style.height = `${Number(row.dataset.score) / 60 * 100}%`;
+        const value = document.createElement('span');
+        value.className = 'chart-bar-value';
+        value.textContent = `${row.dataset.score}%`;
+        bar.append(value);
+        space.append(bar);
+        const label = document.createElement('div');
+        label.className = 'chart-model';
+        label.textContent = row.cells[1].textContent;
+        column.append(space, label);
+        columns.append(column);
+      });
+    }
     leaderboardRows.forEach((row, index) => {
       const typeCell = row.cells[2];
       const type = typeCell.textContent.includes('Commercial') ? 'commercial' : typeCell.textContent.includes('Open source') ? 'open' : 'video';
@@ -223,6 +287,7 @@
         leaderboardBody.append(row);
       });
       document.getElementById('leaderboard-count').textContent = `${count} models · 2,728 cases`;
+      renderChart();
     }
     filterButtons.forEach(button => button.addEventListener('click', () => {
       modelFilter = button.dataset.filter;
@@ -231,6 +296,8 @@
     }));
     leaderboardSort.addEventListener('change', updateLeaderboard);
     document.getElementById('leaderboard-toolbar').hidden = false;
+    document.getElementById('leaderboard-chart').hidden = false;
+    renderChart();
   </script>
 </body>
 </html>
