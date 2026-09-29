@@ -47,9 +47,6 @@
     .score-value { width: 2.8rem; }
     .leaderboard-note { color: #747b84; margin-top: 0.75rem; }
     .leaderboard-chart { margin: 1.5rem 0 0; }
-    .chart-legend { display: flex; justify-content: flex-end; gap: 1.25rem; flex-wrap: wrap; font-size: 0.75rem; color: #606870; margin-bottom: 1.25rem; }
-    .chart-legend span { display: inline-flex; align-items: center; gap: 0.45rem; }
-    .chart-legend i { width: 10px; height: 10px; border-radius: 2px; }
     .chart-scroll { overflow-x: auto; }
     .chart-layout { display: grid; grid-template-columns: 3rem 1fr; min-width: 880px; padding-top: 1.25rem; }
     .chart-yaxis { position: relative; height: 280px; color: #858b94; font-size: 0.75rem; font-variant-numeric: tabular-nums; }
@@ -96,7 +93,6 @@
       <div class="leaderboard-heading"><h2 class="title is-3">Leaderboard</h2><span class="leaderboard-count" id="leaderboard-count" aria-live="polite">11 models · 2,728 cases</span></div>
       <p class="mb-4">Direct model evaluation on all 2,728 SolveEdit cases. Video models are scored from their final frames.</p>
       <figure class="leaderboard-chart" id="leaderboard-chart" hidden aria-label="SolveScore comparison of evaluated models">
-        <div class="chart-legend"><span><i style="background:#759acb"></i>Commercial image</span><span><i style="background:#83b6b0"></i>Open source image</span><span><i style="background:#d8bd79"></i>Image to video</span></div>
         <div class="chart-scroll">
           <div class="chart-layout">
             <div class="chart-yaxis" aria-hidden="true"><span style="bottom:0">0%</span><span style="bottom:16.6667%">10%</span><span style="bottom:33.3333%">20%</span><span style="bottom:50%">30%</span><span style="bottom:66.6667%">40%</span><span style="bottom:83.3333%">50%</span><span style="bottom:100%">60%</span></div>
@@ -216,6 +212,19 @@
     const leaderboardRows = Array.from(leaderboardBody.rows);
     const leaderboardSort = document.getElementById('leaderboard-sort');
     const filterButtons = Array.from(document.querySelectorAll('[data-filter]'));
+    const modelColors = {
+      'GPT-Image-2': 'hsl(210, 28%, 65%)',
+      'Seedream 5.0 Pro': 'hsl(195, 28%, 65%)',
+      'Gemini 3.1 Flash Image': 'hsl(178, 28%, 65%)',
+      'Qwen Image 2.0 Pro': 'hsl(158, 28%, 65%)',
+      'Kling V3': 'hsl(135, 28%, 65%)',
+      'FLUX.2 [dev]': 'hsl(105, 28%, 65%)',
+      'Qwen-Image-Edit-2509': 'hsl(65, 28%, 65%)',
+      'FLUX.1 Kontext [dev]': 'hsl(42, 28%, 65%)',
+      'BAGEL': 'hsl(22, 28%, 65%)',
+      'OmniGen2': 'hsl(355, 28%, 65%)',
+      'HunyuanVideo-1.5': 'hsl(330, 28%, 65%)'
+    };
     let modelFilter = 'all';
     function renderChart() {
       const rows = leaderboardRows.filter(row => modelFilter === 'all' || row.dataset.type === modelFilter).sort((a, b) => Number(a.dataset.score) - Number(b.dataset.score));
@@ -234,7 +243,7 @@
       rows.forEach(row => {
         const column = document.createElement('div');
         column.className = 'chart-column' + (row.dataset.score === '57.0' ? ' best' : '');
-        column.style.setProperty('--bar-color', { commercial: '#759acb', open: '#83b6b0', video: '#d8bd79' }[row.dataset.type]);
+        column.style.setProperty('--bar-color', modelColors[row.cells[1].textContent]);
         const space = document.createElement('div');
         space.className = 'chart-bar-space';
         const bar = document.createElement('div');
@@ -269,6 +278,7 @@
       track.setAttribute('aria-hidden', 'true');
       const fill = document.createElement('span');
       fill.className = 'score-fill';
+      fill.style.backgroundColor = modelColors[row.cells[1].textContent];
       fill.style.width = `${Number(row.dataset.score)}%`;
       track.append(fill);
       const value = document.createElement('span');
