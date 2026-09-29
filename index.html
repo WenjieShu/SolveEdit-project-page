@@ -227,7 +227,7 @@
     };
     let modelFilter = 'all';
     function renderChart() {
-      const rows = leaderboardRows.filter(row => modelFilter === 'all' || row.dataset.type === modelFilter).sort((a, b) => Number(a.dataset.score) - Number(b.dataset.score));
+      const rows = leaderboardRows.filter(row => modelFilter === 'all' || row.dataset.type === modelFilter).sort((a, b) => Number(b.dataset.score) - Number(a.dataset.score));
       const columns = document.getElementById('chart-columns');
       columns.replaceChildren();
       columns.style.gridTemplateColumns = `repeat(${rows.length}, minmax(0, 1fr))`;
