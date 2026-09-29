@@ -14,13 +14,39 @@
     .metric-label { color: #555; }
     .section-band { padding: 3rem 1.5rem; }
     .button.is-primary { background-color: #8b1e3f; }
-    .leaderboard-table { min-width: 640px; }
-    .leaderboard-table th, .leaderboard-table td { vertical-align: middle; }
+    #leaderboard { background: #fff; border-top: 1px solid #e5e7eb; border-bottom: 1px solid #e5e7eb; }
+    .leaderboard-heading { display: flex; justify-content: space-between; align-items: baseline; gap: 1rem; }
+    .leaderboard-heading .title { margin-bottom: 0.75rem; }
+    .leaderboard-count { color: #72777f; font-size: 0.875rem; white-space: nowrap; }
+    .leaderboard-toolbar { display: flex; justify-content: space-between; align-items: center; gap: 1rem; margin: 1.5rem 0 0.75rem; flex-wrap: wrap; }
+    .leaderboard-toolbar[hidden], .leaderboard-table tr[hidden] { display: none; }
+    .leaderboard-filters { display: flex; gap: 0; border-bottom: 1px solid #e5e7eb; flex-wrap: wrap; }
+    .leaderboard-filters button { background: transparent; border: 0; border-bottom: 2px solid transparent; padding: 0.65rem 0.85rem; color: #666; font: inherit; font-size: 0.875rem; cursor: pointer; }
+    .leaderboard-filters button[aria-pressed="true"] { color: #8b1e3f; border-bottom-color: #8b1e3f; font-weight: 600; }
+    .leaderboard-filters button:focus-visible { outline: 2px solid #8b1e3f; outline-offset: 2px; }
+    .leaderboard-sort { display: flex; gap: 0.5rem; align-items: center; color: #606870; font-size: 0.875rem; }
+    .leaderboard-sort select { background: #fff; color: #333; border: 1px solid #dce0e5; border-radius: 4px; padding: 0.5rem; font: inherit; }
+    .leaderboard-table { min-width: 690px; background: transparent; margin-bottom: 0; }
+    .leaderboard-table thead th { color: #72777f; font-size: 0.75rem; font-weight: 600; border-bottom: 1px solid #dce0e5; padding: 0.85rem 0.65rem; white-space: nowrap; }
+    .leaderboard-table th, .leaderboard-table td { vertical-align: middle; padding: 0.85rem 0.65rem; border-bottom: 1px solid #edf0f2; }
+    .leaderboard-table tbody th { font-size: 0.9375rem; font-weight: 500; }
     .leaderboard-table th:nth-child(n+4), .leaderboard-table td:nth-child(n+4) { text-align: right; }
-    .leaderboard-table .rank { color: #666; font-variant-numeric: tabular-nums; }
-    .leaderboard-table .score { font-weight: 700; font-variant-numeric: tabular-nums; }
-    .leaderboard-table .top-model { background: #e9f3eb; }
-    .leaderboard-table .model-type { color: #606870; font-size: 0.875rem; }
+    .leaderboard-table .rank { color: #828891; font-variant-numeric: tabular-nums; width: 3rem; }
+    .leaderboard-table .podium .rank { color: #8b1e3f; font-weight: 700; }
+    .leaderboard-table .top-model { background: #fcf5f7; }
+    .leaderboard-table .top-model th { font-weight: 700; }
+    .leaderboard-table .model-type { color: #606870; font-size: 0.75rem; white-space: nowrap; }
+    .leaderboard-table .model-type[data-type="commercial"] { color: #8b1e3f; }
+    .leaderboard-table .model-type[data-type="open"] { color: #23725a; }
+    .leaderboard-table .model-type[data-type="video"] { color: #356da1; }
+    .leaderboard-table td:nth-child(4), .leaderboard-table td:nth-child(5) { color: #656b73; font-size: 0.875rem; font-variant-numeric: tabular-nums; }
+    .leaderboard-table .score { width: 11rem; font-weight: 700; font-variant-numeric: tabular-nums; }
+    .score-cell { display: flex; align-items: center; justify-content: flex-end; gap: 0.8rem; }
+    .score-track { width: 5rem; height: 5px; background: #eceef1; border-radius: 2px; overflow: hidden; }
+    .score-fill { display: block; height: 100%; background: #8b1e3f; }
+    .score-value { width: 2.8rem; }
+    .leaderboard-note { color: #747b84; margin-top: 0.75rem; }
+    @media (max-width: 600px) { .leaderboard-heading { display: block; } .leaderboard-filters button { padding: 0.6rem; } .leaderboard-toolbar { gap: 0.75rem; } }
     .case-row { padding: 1.25rem 0; border-bottom: 1px solid #d9dcde; }
     .case-row:last-child { border-bottom: 0; }
     .case-row figure { margin: 0; min-width: 0; }
@@ -48,10 +74,19 @@
 
   <section class="section section-band has-background-light" id="leaderboard">
     <div class="container is-max-desktop">
-      <h2 class="title is-3">Leaderboard</h2>
+      <div class="leaderboard-heading"><h2 class="title is-3">Leaderboard</h2><span class="leaderboard-count" id="leaderboard-count" aria-live="polite">11 models · 2,728 cases</span></div>
       <p class="mb-4">Direct model evaluation on all 2,728 SolveEdit cases. Video models are scored from their final frames.</p>
+      <div class="leaderboard-toolbar" id="leaderboard-toolbar" hidden>
+        <div class="leaderboard-filters" role="group" aria-label="Model type">
+          <button type="button" data-filter="all" aria-pressed="true">All models</button>
+          <button type="button" data-filter="commercial" aria-pressed="false">Commercial</button>
+          <button type="button" data-filter="open" aria-pressed="false">Open source</button>
+          <button type="button" data-filter="video" aria-pressed="false">Video</button>
+        </div>
+        <label class="leaderboard-sort">Sort by <select id="leaderboard-sort"><option value="score">SolveScore</option><option value="required">Required R</option><option value="damage">Damage D</option></select></label>
+      </div>
       <div class="table-container">
-        <table class="table is-fullwidth is-striped leaderboard-table">
+        <table class="table is-fullwidth leaderboard-table">
           <thead><tr><th scope="col">Rank</th><th scope="col">Model</th><th scope="col">Type</th><th scope="col">Required <i>R</i> ↑</th><th scope="col">Damage <i>D</i> ↓</th><th scope="col">SolveScore ↑</th></tr></thead>
           <tbody>
             <tr class="top-model"><td class="rank">1</td><th scope="row">GPT-Image-2</th><td class="model-type">Commercial image</td><td>67.6</td><td>23.9</td><td class="score">57.0</td></tr>
@@ -68,7 +103,7 @@
           </tbody>
         </table>
       </div>
-      <p class="is-size-7">Scores are percentages. Higher is better for <i>R</i> and SolveScore; lower is better for <i>D</i>.</p>
+      <p class="is-size-7 leaderboard-note">Scores are percentages. Higher is better for <i>R</i> and SolveScore; lower is better for <i>D</i>.</p>
     </div>
   </section>
 
@@ -147,5 +182,55 @@
   <footer class="footer">
     <div class="content has-text-centered"><p>SolveEdit · benchmark and planning materials</p></div>
   </footer>
+  <script>
+    const leaderboardBody = document.querySelector('.leaderboard-table tbody');
+    const leaderboardRows = Array.from(leaderboardBody.rows);
+    const leaderboardSort = document.getElementById('leaderboard-sort');
+    const filterButtons = Array.from(document.querySelectorAll('[data-filter]'));
+    let modelFilter = 'all';
+    leaderboardRows.forEach((row, index) => {
+      const typeCell = row.cells[2];
+      const type = typeCell.textContent.includes('Commercial') ? 'commercial' : typeCell.textContent.includes('Open source') ? 'open' : 'video';
+      row.dataset.type = type;
+      row.dataset.score = row.cells[5].textContent;
+      row.dataset.required = row.cells[3].textContent;
+      row.dataset.damage = row.cells[4].textContent;
+      typeCell.dataset.type = type;
+      typeCell.textContent = { commercial: 'Commercial', open: 'Open source', video: 'Video' }[type];
+      row.classList.toggle('podium', index < 3);
+      const cell = document.createElement('div');
+      cell.className = 'score-cell';
+      const track = document.createElement('span');
+      track.className = 'score-track';
+      track.setAttribute('aria-hidden', 'true');
+      const fill = document.createElement('span');
+      fill.className = 'score-fill';
+      fill.style.width = `${Number(row.dataset.score)}%`;
+      track.append(fill);
+      const value = document.createElement('span');
+      value.className = 'score-value';
+      value.textContent = row.dataset.score;
+      cell.append(track, value);
+      row.cells[5].replaceChildren(cell);
+    });
+    function updateLeaderboard() {
+      const key = leaderboardSort.value;
+      const sorted = leaderboardRows.slice().sort((a, b) => key === 'damage' ? Number(a.dataset[key]) - Number(b.dataset[key]) : Number(b.dataset[key]) - Number(a.dataset[key]));
+      let count = 0;
+      sorted.forEach(row => {
+        row.hidden = modelFilter !== 'all' && row.dataset.type !== modelFilter;
+        if (!row.hidden) count++;
+        leaderboardBody.append(row);
+      });
+      document.getElementById('leaderboard-count').textContent = `${count} models · 2,728 cases`;
+    }
+    filterButtons.forEach(button => button.addEventListener('click', () => {
+      modelFilter = button.dataset.filter;
+      filterButtons.forEach(item => item.setAttribute('aria-pressed', String(item === button)));
+      updateLeaderboard();
+    }));
+    leaderboardSort.addEventListener('change', updateLeaderboard);
+    document.getElementById('leaderboard-toolbar').hidden = false;
+  </script>
 </body>
 </html>
